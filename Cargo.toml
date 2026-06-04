@@ -1,0 +1,11 @@
+[package]
+name = "ternary-science"
+version = "0.1.0"
+edition = "2021"
+description = "Negative Space Intelligence — Experimental Evidence from GPU Benchmarks and Proofs"
+license = "MIT"
+repository = "https://github.com/SuperInstance/ternary-science"
+keywords = ["ternary", "negative-space", "intelligence", "gpu", "benchmark"]
+categories = ["science", "algorithms"]
+
+[dependencies]
