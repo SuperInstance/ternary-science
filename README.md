@@ -75,3 +75,11 @@ the evidence holds.
 ## License
 
 MIT
+
+## See Also
+- **ternary-experiment** — related
+- **ternary-benchmark** — related
+- **ternary-fitness** — related
+- **ternary-validation** — related
+- **ternary-entropy** — related
+
