@@ -1,6 +1,30 @@
 # Ternary Science — Experimental Evidence for Negative Space Intelligence
 
+[![crates.io](https://img.shields.io/crates/v/ternary-science)](https://crates.io/crates/ternary-science)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 **Ternary Science** is not another algorithm library — it is the **documented experimental evidence** backing the Negative Space Intelligence theory. It collects five proved conservation laws, five universal strategy species identified from 2400-game GPU runs, RTX 4050 hardware benchmarks, scaling studies from 24 to 24000 games, cross-language validation results (Python/Rust/C/WASM), and bare-metal ARM NEON measurements.
+
+## Quick Start
+
+```bash
+cargo add ternary-science
+```
+
+```rust
+use ternary_science;
+
+// Access conservation law proofs
+let laws = ternary_science::laws::all_laws();
+for law in &laws {
+    println!("Law {}: {} — verified: {}", law.id, law.statement, law.verified);
+}
+
+// GPU benchmark results
+let bench = ternary_science::gpu_benchmarks::rtx_4050();
+println!("Ternary TOPS: {:.1}", bench.ternary_tops);
+}
+```
 
 ## Why It Matters
 
@@ -51,26 +75,6 @@ Performance characteristics measured from 24 to 24,000 concurrent games:
 ### Cross-Validation
 
 Reference implementations in Python, Rust, C, and WASM all produce identical results, validating algorithm correctness across languages.
-
-## Quick Start
-
-```rust
-use ternary_science;
-
-// Access conservation law proofs
-let laws = ternary_science::laws::all_laws();
-for law in &laws {
-    println!("Law {}: {} — verified: {}", law.id, law.statement, law.verified);
-}
-
-// GPU benchmark results
-let bench = ternary_science::gpu_benchmarks::rtx_4050();
-println!("Ternary TOPS: {:.1}", bench.ternary_tops);
-```
-
-```bash
-cargo add ternary-science
-```
 
 ## API
 
@@ -148,7 +152,11 @@ This repo is part of the **SuperInstance** flagship ecosystem — agent-first co
 | Registry | Package | Install |
 |----------|---------|---------|
 | **PyPI** | `flux-vm` | `pip install flux-vm` |
+| **PyPI** | `plato-core` | `pip install plato-core` |
+| **PyPI** | `si-exocortex` | `pip install si-exocortex` |
 | **crates.io** | `fluxvm` | `cargo add fluxvm` |
+| **crates.io** | `ternary-science` | `cargo add ternary-science` |
+| **crates.io** | `categorical-agents` | `cargo add categorical-agents` |
 | **npm** | `flux-js` | `npm install flux-js` *(coming soon)* |
 
 ### Philosophy & Architecture
