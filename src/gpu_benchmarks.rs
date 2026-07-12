@@ -92,12 +92,8 @@ mod tests {
 
     #[test]
     fn tensor_core_speedup_range() {
-        assert!(
-            TENSOR_CORE_FP16_SPEEDUP_MIN >= 14.6,
-        );
-        assert!(
-            TENSOR_CORE_FP16_SPEEDUP_MAX <= 19.6,
-        );
+        assert!(TENSOR_CORE_FP16_SPEEDUP_MIN >= 14.6,);
+        assert!(TENSOR_CORE_FP16_SPEEDUP_MAX <= 19.6,);
     }
 
     #[test]
@@ -110,9 +106,7 @@ mod tests {
 
     #[test]
     fn cpu_cell_throughput_561m() {
-        assert!(
-            (CPU_CELL_THROUGHPUT - 561_000_000.0).abs() < 1_000_000.0,
-        );
+        assert!((CPU_CELL_THROUGHPUT - 561_000_000.0).abs() < 1_000_000.0,);
     }
 
     #[test]

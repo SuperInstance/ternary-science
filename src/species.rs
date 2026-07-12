@@ -97,11 +97,7 @@ impl StrategySpecies {
 ///
 /// Win-rate standard deviation increases slightly: 0.135 → 0.149.
 pub fn scaling_data() -> &'static [(usize, usize, f64)] {
-    &[
-        (24, 7, 0.135),
-        (240, 10, 0.142),
-        (2400, 14, 0.149),
-    ]
+    &[(24, 7, 0.135), (240, 10, 0.142), (2400, 14, 0.149)]
 }
 
 #[cfg(test)]
@@ -115,44 +111,37 @@ mod tests {
 
     #[test]
     fn explorer_wins_55_percent() {
-        assert!(
-            (StrategySpecies::Explorer.win_rate() - 0.55).abs() < 0.01,
-        );
+        assert!((StrategySpecies::Explorer.win_rate() - 0.55).abs() < 0.01,);
     }
 
     #[test]
     fn diplomat_wins_50_percent() {
-        assert!(
-            (StrategySpecies::Diplomat.win_rate() - 0.50).abs() < 0.01,
-        );
+        assert!((StrategySpecies::Diplomat.win_rate() - 0.50).abs() < 0.01,);
     }
 
     #[test]
     fn marksman_wins_50_percent() {
-        assert!(
-            (StrategySpecies::Marksman.win_rate() - 0.50).abs() < 0.01,
-        );
+        assert!((StrategySpecies::Marksman.win_rate() - 0.50).abs() < 0.01,);
     }
 
     #[test]
     fn climber_wins_35_percent() {
-        assert!(
-            (StrategySpecies::Climber.win_rate() - 0.35).abs() < 0.01,
-        );
+        assert!((StrategySpecies::Climber.win_rate() - 0.35).abs() < 0.01,);
     }
 
     #[test]
     fn prospector_wins_10_percent() {
-        assert!(
-            (StrategySpecies::Prospector.win_rate() - 0.10).abs() < 0.01,
-        );
+        assert!((StrategySpecies::Prospector.win_rate() - 0.10).abs() < 0.01,);
     }
 
     #[test]
     fn prospector_has_maximum_diversity() {
         let (label, bits) = StrategySpecies::Prospector.entropy();
         assert_eq!(label, "maximum");
-        assert!((bits - 1.99).abs() < 0.01, "Prospector diversity ≈ 1.99 bits");
+        assert!(
+            (bits - 1.99).abs() < 0.01,
+            "Prospector diversity ≈ 1.99 bits"
+        );
     }
 
     #[test]

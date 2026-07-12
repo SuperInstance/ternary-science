@@ -16,9 +16,19 @@
 //! | [`cross_validation`] | Cross-language (Python/Rust/C/WASM) test results |
 //! | [`metal`] | Bare-metal embedded and ARM NEON results |
 
-pub mod laws;
-pub mod species;
-pub mod gpu_benchmarks;
-pub mod scaling;
+// This crate is an *evidence* layer: its tests intentionally assert that the
+// public experimental `const` data still matches its documented values (e.g.
+// `assert_eq!(GPU_CROSSOVER_VECTORS, 10_000)`, `assert!(HASH_LATENCY_US < 1.0)`).
+// Those assertions are compile-time-knowable by design — they are regression
+// locks on the recorded data, not runtime logic — so the
+// `clippy::assertions_on_constants` lint is a false positive here and is
+// suppressed crate-wide. Genuine invariants are additionally covered by
+// non-constant tests (see `laws` and `species` modules).
+#![allow(clippy::assertions_on_constants)]
+
 pub mod cross_validation;
+pub mod gpu_benchmarks;
+pub mod laws;
 pub mod metal;
+pub mod scaling;
+pub mod species;

@@ -192,7 +192,10 @@ mod tests {
     #[test]
     fn all_five_laws_are_distinct() {
         let laws: [(&str, f64); 5] = [
-            ("L1 structure discovery", law_1_negative_discovers_structure()),
+            (
+                "L1 structure discovery",
+                law_1_negative_discovers_structure(),
+            ),
             ("L2 avoid:choose ratio", law_2_avoidance_dominates()),
             ("L3 marksman %", law_3_species_coexist().1),
             ("L4 population advantage", law_4_population_advantage()),

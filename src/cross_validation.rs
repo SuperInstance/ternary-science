@@ -18,10 +18,26 @@ pub struct LanguageResult {
 /// All cross-language validation results.
 pub fn results() -> Vec<LanguageResult> {
     vec![
-        LanguageResult { language: "Python", passed: 16, total: 16 },
-        LanguageResult { language: "Rust",   passed: 5,  total: 5  },
-        LanguageResult { language: "C",      passed: 19, total: 19 },
-        LanguageResult { language: "WASM",   passed: 17, total: 17 },
+        LanguageResult {
+            language: "Python",
+            passed: 16,
+            total: 16,
+        },
+        LanguageResult {
+            language: "Rust",
+            passed: 5,
+            total: 5,
+        },
+        LanguageResult {
+            language: "C",
+            passed: 19,
+            total: 19,
+        },
+        LanguageResult {
+            language: "WASM",
+            passed: 17,
+            total: 17,
+        },
     ]
 }
 
