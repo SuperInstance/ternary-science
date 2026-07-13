@@ -84,13 +84,13 @@ From 2,400 games played on an RTX 4050 GPU, five strategy species emerged univer
 
 | Species | Niche | Win Rate | Entropy | Signature |
 |---------|-------|----------|---------|-----------|
-| 🌊 **Explorer** | Weak signal | 55% | 1.8 bits (high) | Spreads avoidance widely; discovers structure by elimination |
+| 🌊 **Explorer** | Weak signal | 55% | 1.58 bits (high) | Spreads avoidance widely; discovers structure by elimination |
 | ⚖️ **Diplomat** | Adaptive opponents | 50% | 1.2 bits (medium) | Mirrors opponents' avoidance; exploits gaps in their negative space |
 | 🎯 **Marksman** | Clear feedback | 50% | 0.4 bits (low) | Concentrates avoidance precisely; converges fast on confirmed bad paths |
 | 📈 **Climber** | Diminishing returns | 35% | 1.5 bits (medium-high) | Trapped in local optima; struggles when early gains mask deeper structure |
-| 🏜️ **Prospector** | Sparse rewards | 10% | 1.99 bits (maximum) | Almost never wins traditionally; fills in the negative-space map for the population |
+| 🏜️ **Prospector** | Sparse rewards | 10% | log₂(3) ≈ 1.585 bits (maximum) | Almost never wins traditionally; fills in the negative-space map for the population |
 
-The Prospector is the most paradoxical species. With a 10% win rate, it appears to be the weakest agent. But its maximum diversity of 1.99 bits (out of a theoretical maximum of log₂(3) ≈ 1.585 bits per ternary decision, or ~2.0 bits when considering strategy-level distributions) means it explores regions of the decision space that no other species visits. It is the population's scout — the agent that sacrifices individual performance to map the frontier.
+The Prospector is the most paradoxical species. With a 10% win rate, it appears to be the weakest agent. But its maximum diversity of log₂(3) ≈ 1.585 bits — the Shannon entropy bound for a single ternary decision over {-1, 0, +1}, attained by the uniform distribution — means it explores regions of the decision space that no other species visits. It is the population's scout — the agent that sacrifices individual performance to map the frontier.
 
 Cross-domain transfer experiments revealed that these species are **environment-specific**: a Marksman trained on Tic-Tac-Toe does not transfer its skills to poker (transfer effect: neutral, not positive). This confirms that the species are genuine ecological adaptations to feedback structure, not artifacts of a particular game's rules.
 

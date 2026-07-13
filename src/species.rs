@@ -4,6 +4,26 @@
 //! 2400 games on GPU hardware. These are not designed — they *emerge* from the
 //! interaction of ternary decision spaces with different environment types.
 
+/// Maximum possible Shannon entropy of a single ternary decision over the
+/// alphabet {-1, 0, +1}, in bits.
+///
+/// # Derivation
+///
+/// For a distribution (p₋₁, p₀, p₊₁) with Σ pᵢ = 1, the Shannon entropy
+/// H = −Σ pᵢ log₂ pᵢ is maximized when the distribution is uniform,
+/// p = (1/3, 1/3, 1/3) (Gibbs' inequality / strict concavity of log₂). There
+///
+/// ```text
+/// H_max = −3 · (1/3) · log₂(1/3) = log₂(3) = ln 3 / ln 2 ≈ 1.5850 bits.
+/// ```
+///
+/// Therefore *no* per-decision ternary entropy may exceed this value. A
+/// reported entropy above log₂(3) is mathematically impossible and indicates a
+/// units/data error. (`std` exposes no `LN_3`, so the value is hardcoded here
+/// and cross-checked against `3.0f64.log2()` in the test
+/// `ternary_max_entropy_constant_is_log2_of_3`.)
+pub const TERNARY_MAX_ENTROPY_BITS: f64 = 1.584_962_500_721_156;
+
 /// A universal strategy species identified in 2400-game GPU experiments.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum StrategySpecies {
@@ -35,9 +55,11 @@ pub enum StrategySpecies {
 
     /// **Prospector** — maximizes diversity in sparse-reward environments.
     ///
-    /// Win rate: 10%. Maximum diversity at 1.99 bits. Prospector almost never
-    /// "wins" in the traditional sense, but its exploration fills in the
-    /// negative-space map for the entire population.
+    /// Win rate: 10%. Maximum diversity: log₂(3) ≈ 1.585 bits — the Shannon
+    /// entropy bound for a ternary decision, attained by the uniform
+    /// distribution over {-1, 0, +1} (see [`TERNARY_MAX_ENTROPY_BITS`]).
+    /// Prospector almost never "wins" in the traditional sense, but its
+    /// exploration fills in the negative-space map for the entire population.
     Prospector,
 }
 
@@ -54,13 +76,18 @@ impl StrategySpecies {
     }
 
     /// Returns the entropy level (low/medium/high) and numeric value.
+    ///
+    /// All values are bounded by [`TERNARY_MAX_ENTROPY_BITS`] (log₂(3) ≈ 1.585
+    /// bits), the maximum Shannon entropy of a ternary decision. The previous
+    /// values (Explorer 1.8, Prospector 1.99) exceeded this bound and were
+    /// impossible for a per-decision ternary distribution.
     pub fn entropy(&self) -> (&'static str, f64) {
         match self {
-            Self::Explorer => ("high", 1.8),
+            Self::Explorer => ("high", 1.58),
             Self::Diplomat => ("medium", 1.2),
             Self::Marksman => ("low", 0.4),
             Self::Climber => ("medium-high", 1.5),
-            Self::Prospector => ("maximum", 1.99),
+            Self::Prospector => ("maximum", TERNARY_MAX_ENTROPY_BITS),
         }
     }
 
@@ -97,11 +124,7 @@ impl StrategySpecies {
 ///
 /// Win-rate standard deviation increases slightly: 0.135 → 0.149.
 pub fn scaling_data() -> &'static [(usize, usize, f64)] {
-    &[
-        (24, 7, 0.135),
-        (240, 10, 0.142),
-        (2400, 14, 0.149),
-    ]
+    &[(24, 7, 0.135), (240, 10, 0.142), (2400, 14, 0.149)]
 }
 
 #[cfg(test)]
@@ -115,44 +138,65 @@ mod tests {
 
     #[test]
     fn explorer_wins_55_percent() {
-        assert!(
-            (StrategySpecies::Explorer.win_rate() - 0.55).abs() < 0.01,
-        );
+        assert!((StrategySpecies::Explorer.win_rate() - 0.55).abs() < 0.01,);
     }
 
     #[test]
     fn diplomat_wins_50_percent() {
-        assert!(
-            (StrategySpecies::Diplomat.win_rate() - 0.50).abs() < 0.01,
-        );
+        assert!((StrategySpecies::Diplomat.win_rate() - 0.50).abs() < 0.01,);
     }
 
     #[test]
     fn marksman_wins_50_percent() {
-        assert!(
-            (StrategySpecies::Marksman.win_rate() - 0.50).abs() < 0.01,
-        );
+        assert!((StrategySpecies::Marksman.win_rate() - 0.50).abs() < 0.01,);
     }
 
     #[test]
     fn climber_wins_35_percent() {
-        assert!(
-            (StrategySpecies::Climber.win_rate() - 0.35).abs() < 0.01,
-        );
+        assert!((StrategySpecies::Climber.win_rate() - 0.35).abs() < 0.01,);
     }
 
     #[test]
     fn prospector_wins_10_percent() {
-        assert!(
-            (StrategySpecies::Prospector.win_rate() - 0.10).abs() < 0.01,
-        );
+        assert!((StrategySpecies::Prospector.win_rate() - 0.10).abs() < 0.01,);
     }
 
     #[test]
     fn prospector_has_maximum_diversity() {
         let (label, bits) = StrategySpecies::Prospector.entropy();
         assert_eq!(label, "maximum");
-        assert!((bits - 1.99).abs() < 0.01, "Prospector diversity ≈ 1.99 bits");
+        // "Maximum" entropy of a ternary decision is exactly the Shannon bound
+        // log2(3), attained by the uniform distribution over {-1,0,+1}.
+        assert!(
+            (bits - TERNARY_MAX_ENTROPY_BITS).abs() < 1e-9,
+            "Prospector diversity must equal log2(3) ≈ 1.585, got {bits}"
+        );
+    }
+
+    #[test]
+    fn entropy_respects_shannon_bound() {
+        // Shannon entropy of any distribution over a 3-symbol alphabet
+        // {-1, 0, +1} is bounded above by log2(3) ≈ 1.585 bits (maximum at the
+        // uniform distribution). No per-decision ternary entropy may exceed it.
+        for species in StrategySpecies::all() {
+            let (_, bits) = species.entropy();
+            assert!(
+                bits <= TERNARY_MAX_ENTROPY_BITS,
+                "{species:?} entropy {bits} exceeds the Shannon bound log2(3) ≈ {}",
+                TERNARY_MAX_ENTROPY_BITS,
+            );
+        }
+    }
+
+    #[test]
+    fn ternary_max_entropy_constant_is_log2_of_3() {
+        // Cross-check the hardcoded bound against the standard library's
+        // floating-point log2(3); guards against a typo in the constant.
+        assert!(
+            (TERNARY_MAX_ENTROPY_BITS - 3.0f64.log2()).abs() < 1e-12,
+            "TERNARY_MAX_ENTROPY_BITS must equal log2(3), got {TERNARY_MAX_ENTROPY_BITS} vs {}",
+            3.0f64.log2(),
+        );
     }
 
     #[test]

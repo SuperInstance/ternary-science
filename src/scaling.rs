@@ -76,10 +76,7 @@ mod tests {
             "Entropy at 2400 games ≈ 80%"
         );
         // 24000-game entropy: plateau
-        assert!(
-            data[3].entropy_pct < 0.85,
-            "Entropy plateaus near 82%"
-        );
+        assert!(data[3].entropy_pct < 0.85, "Entropy plateaus near 82%");
     }
 
     #[test]
@@ -111,16 +108,12 @@ mod tests {
 
     #[test]
     fn universal_pct_25_5_percent() {
-        assert!(
-            (UNIVERSAL_SPECIES_PCT - 0.255).abs() < 0.001,
-        );
+        assert!((UNIVERSAL_SPECIES_PCT - 0.255).abs() < 0.001,);
     }
 
     #[test]
     fn specialist_pct_34_9_percent() {
-        assert!(
-            (SPECIALIST_SPECIES_PCT - 0.349).abs() < 0.001,
-        );
+        assert!((SPECIALIST_SPECIES_PCT - 0.349).abs() < 0.001,);
     }
 
     #[test]

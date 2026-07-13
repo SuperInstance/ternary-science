@@ -190,14 +190,30 @@ mod tests {
     }
 
     #[test]
-    fn all_five_laws_are_distinct() {
-        let laws: [(&str, f64); 5] = [
-            ("L1 structure discovery", law_1_negative_discovers_structure()),
+    fn all_five_laws_produce_distinct_metrics() {
+        // Each law is stated to measure a *distinct* quantity. The previous
+        // version of this test only asserted `[T; 5].len() == 5`, which is true
+        // for *any* five values (including five identical ones) and therefore
+        // could not detect a collision. Here we check the metric values
+        // themselves are pairwise distinct.
+        let metrics: [(&str, f64); 5] = [
+            (
+                "L1 structure discovery",
+                law_1_negative_discovers_structure(),
+            ),
             ("L2 avoid:choose ratio", law_2_avoidance_dominates()),
             ("L3 marksman %", law_3_species_coexist().1),
             ("L4 population advantage", law_4_population_advantage()),
             ("L5 conservation std", law_5_avoidance_ratio_conserved().2),
         ];
-        assert_eq!(laws.len(), 5, "All five laws produce distinct metrics");
+        for i in 0..metrics.len() {
+            for j in (i + 1)..metrics.len() {
+                assert_ne!(
+                    metrics[i].1, metrics[j].1,
+                    "{} and {} produced the same metric value ({}): the five laws must be distinct",
+                    metrics[i].0, metrics[j].0, metrics[i].1,
+                );
+            }
+        }
     }
 }

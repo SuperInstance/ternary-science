@@ -12,17 +12,23 @@ cargo add ternary-science
 ```
 
 ```rust
-use ternary_science;
+// Conservation laws — each returns its experimentally measured value.
+let structure = ternary_science::laws::law_1_negative_discovers_structure();
+let avoid_ratio = ternary_science::laws::law_2_avoidance_dominates();
+let (_species, marksman_pct, resilience) = ternary_science::laws::law_3_species_coexist();
+println!("negative-feedback structure discovery: {:.0}%", structure * 100.0);
+println!("avoid:choose ratio = {:.0}:1", avoid_ratio);
+println!("marksman ~{:.0}% of population, resilience {:.0}", marksman_pct * 100.0, resilience);
 
-// Access conservation law proofs
-let laws = ternary_science::laws::all_laws();
-for law in &laws {
-    println!("Law {}: {} — verified: {}", law.id, law.statement, law.verified);
-}
+// RTX 4050 hardware benchmarks.
+println!(
+    "hash throughput: {:.1}M/s",
+    ternary_science::gpu_benchmarks::HASH_THROUGHPUT_PER_SEC / 1e6
+);
 
-// GPU benchmark results
-let bench = ternary_science::gpu_benchmarks::rtx_4050();
-println!("Ternary TOPS: {:.1}", bench.ternary_tops);
+// The five universal strategy species.
+for s in ternary_science::species::StrategySpecies::all() {
+    println!("{:?}: win rate {:.0}%, niche = {}", s, s.win_rate() * 100.0, s.niche());
 }
 ```
 
@@ -34,43 +40,48 @@ Claims about ternary systems require empirical validation. This crate is that va
 
 ### Conservation Laws
 
-Five conservation laws are stated and experimentally verified:
+Five conservation laws are stated and experimentally verified (see [`laws`](src/laws.rs)):
 
-1. **γ + η = C**: Growth plus entropy equals a constant (fleet capacity)
-2. **Zero-density conservation**: The fraction of zero-valued agents is preserved
-3. **Tunnel-trap balance**: Exit rate from state 0 equals entry rate to state 0
-4. **Strategy species conservation**: The five universal species persist across scales
-5. **Pareto frontier invariance**: The γ-η trade-off frontier is scale-invariant
+1. **Negative space discovery**: pure negative feedback discovers ≥60% of the avoidable decision space with no positive signal
+2. **Avoidance dominance**: ternary agents avoid at a ratio of ~294:1
+3. **Strategy species coexistence**: five species coexist stably (Lotka-Volterra dynamics); the Marksman stabilizes at ~27%; 100% ecological resilience
+4. **Population intelligence exceeds individual**: populations achieve ≥+0.075 fitness over the best individual via negative-space synthesis
+5. **Avoidance-ratio conservation**: the avoid:choose ratio is conserved from 10 to 5,000 agents with std ≤ 0.001
 
-Each law is verified by running experiments across parameter sweeps and checking invariants.
+Each law is backed by a typed function and a unit test that checks the invariant programmatically.
 
 ### Strategy Species
 
-From 2400-game GPU simulations, five universal strategy species emerge:
+From 2400-game GPU simulations, five universal strategy species emerge (see [`species`](src/species.rs)):
 
-1. **Dominators**: Consistently +1, high γ
-2. **Defectors**: Consistently -1, high η  
-3. **Oscillators**: Cycle through {-1, 0, +1} with regular periods
-4. **Adapters**: State depends on neighbors' states
-5. **Insulators**: Persistently 0, breaking interaction chains
+1. **Explorer** — weak-signal environments; 55% win rate; high entropy (1.58 bits)
+2. **Diplomat** — adaptive opponents; 50% win rate; medium entropy (1.2 bits)
+3. **Marksman** — clear feedback; 50% win rate; low entropy (0.4 bits)
+4. **Climber** — diminishing returns; 35% win rate; medium-high entropy (1.5 bits)
+5. **Prospector** — sparse rewards; 10% win rate; maximum entropy (log₂(3) ≈ 1.585 bits)
 
-These species appear at all population sizes — they are universal attractors of ternary dynamics.
+These species appear at all population sizes — they are universal attractors of ternary dynamics, and their per-decision entropies are all bounded by the Shannon limit log₂(3).
 
 ### GPU Benchmarks
 
-Measured on RTX 4050:
-- Ternary matmul throughput: ~200 TOPS (conditional add/subtract/skip)
-- Binary (XNOR+popcount) throughput: ~150 TOPS
-- FP32 throughput: ~30 TFLOPS
+Measured on RTX 4050 laptop GPU (see [`gpu_benchmarks`](src/gpu_benchmarks.rs)):
 
-Ternary operations are 6-7× faster than FP32 on the same hardware.
+- Hash throughput: 3.2M hashes/s (0.3 µs latency each)
+- Embedding latency: Python 16 µs vs Rust 1.73 µs (~9.2× faster)
+- GPU/CPU crossover: GPU wins above 10K vectors
+- Tensor-core FP16 SVD speedup: 14.6–19.6× vs FP32 (24 parallel games)
+- Matmul speedup: 9.8× GPU vs CPU
+- CPU ternary-cell throughput: 561M cells/s; 10K agents evolve in 0.5 ms
 
 ### Scaling Studies
 
-Performance characteristics measured from 24 to 24,000 concurrent games:
-- Compute scales linearly O(N)
-- Memory scales sub-linearly due to 2-bit packing
-- Convergence time scales logarithmically
+Characteristics measured from 24 to 24,000 games (see [`scaling`](src/scaling.rs)):
+
+- Strategy clusters: 7 → 10 → 14 → ~200 as games scale 24 → 240 → 2400 → 24000
+- Population fitness converges monotonically: 0.803 → 0.921 → 0.988 → 0.995
+- Entropy plateaus near ~82% of the accessible decision space
+- At 24000 games: 25.5% universal species, 34.9% specialist species
+- The fundamental ratios (avoidance ratio, species coexistence, population advantage) are invariant across scale
 
 ### Cross-Validation
 
@@ -89,7 +100,7 @@ Reference implementations in Python, Rust, C, and WASM all produce identical res
 
 ## Architecture Notes
 
-This crate is the evidence layer for **SuperInstance**'s theoretical foundation. The γ + η = C conservation law — the central equation of the ecosystem — is formally stated, experimentally verified, and benchmarked here. See [Architecture](https://github.com/SuperInstance/SuperInstance/blob/main/ARCHITECTURE.md).
+This crate is the evidence layer for **SuperInstance**'s theoretical foundation: it states and unit-tests the five conservation laws of Negative Space Intelligence (avoidance-ratio conservation, species coexistence, population advantage, etc.) and backs them with RTX 4050, ESP32, and ARM-NEON measurements. See [Architecture](https://github.com/SuperInstance/SuperInstance/blob/main/ARCHITECTURE.md).
 
 ## References
 
